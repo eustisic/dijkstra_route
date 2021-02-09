@@ -8,7 +8,7 @@ Clicking calculate route will show the shortest path between the two airports as
 
 For implementing Dijkstra's algorithm I followed a great explanation presented in [A Common Sense Guide to Data Structures and Algorithms](https://pragprog.com/titles/jwdsal2/a-common-sense-guide-to-data-structures-and-algorithms-second-edition/) by _Jay Wengrow_.
 
-This App was built with React and deployed on [Heroku](https://git.heroku.com/secret-ocean-82393.git)
+This App was built with React and deployed on [Heroku](https://secret-ocean-82393.herokuapp.com/)
 
 Code can be found in [this](https://github.com/eustisic/dijkstra_route) repository.
 
