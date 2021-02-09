@@ -22,6 +22,7 @@ const columns = [
 
 const App = () => {
   const [selected, setSelected] = useState(DATA.routes);
+  const [option, setOption] = useState('');
   const [departure, setDeparture] = useState("all");
   const [arrival, setArrival] = useState("all");
   const [srcPorts, setSrcPorts] = useState([]);
@@ -48,7 +49,8 @@ const App = () => {
   const handleClear = () => {
     setSelected(DATA.routes);
     setDeparture("all");
-    setArrival("all")
+    setArrival("all");
+    setOption("");
   }
 
   const mapClick = (e) => {
@@ -61,8 +63,31 @@ const App = () => {
   }
 
   const calculateRoute = () => {
-    dijkstraAlgorithm()
 
+    // get an array of ports for the shortest path
+    if (arrival !== "all" && departure !== "all") {
+      const path = dijkstraAlgorithm()
+      const route = []
+
+      try {
+        for (let i = 0; i < path.length - 1; i += 1) {
+          route.push(DATA.routes.find(route => {
+              return route.src === path[i] && route.dest === path[i+1]
+            })
+          )
+        }
+
+        setSelected(route);
+        setOption("found");
+
+      } catch(e) {
+        handleClear();
+        alert("No path found");
+      }
+
+    } else {
+      alert("Invalid entry");
+    }
   }
 
   const dijkstraAlgorithm = () => {
@@ -84,7 +109,6 @@ const App = () => {
       let avail = DATA.routes.filter(route => route.src === currentPort);
       // iterate through dests if unvisited push to unvisited
       avail.forEach(route => {
-        console.log(route);
         if (!visited[route.dest]) {
           unvisited.push(route.dest);
         }
@@ -99,25 +123,24 @@ const App = () => {
       })
 
       currentPort = nextShortestDistDest(unvisited, shortestDistanceTable);
-      console.log(visited);
     }
 
     let shortestPath = [];
 
     currentPort = arrival;
 
+    if (!shortestPrevTable[currentPort]) {
+      return
+    }
+
     while(currentPort !== departure) {
-      shortestPath.push(getAirportByCode(currentPort))
+      shortestPath.push(currentPort)
 
       currentPort = shortestPrevTable[currentPort]
     }
-
-    debugger    
-    shortestPath.push(getAirportByCode(departure));
-    console.log(shortestPath);
+    
+    shortestPath.push(departure);
     return shortestPath.reverse();
-
-      // calculate dist of getting from start to adjacent city using current as second-to-last stop
   }
 
   // takes a list of ports finds their stored shortest distance and returns the port with the stored shortest distance
@@ -152,10 +175,10 @@ const App = () => {
   return (
     <div className="app">
     <header className="header">
-      <h1 className="title">Airline Routes</h1>
+      <h1 className="title">Dijkstra's Route</h1>
     </header>
     <section>
-      <RouteMap selected={selected} handleClick={(e) => mapClick(e)}/>
+      <RouteMap selected={selected} option={option} handleClick={(e) => mapClick(e)}/>
     </section>
     <section>
     <Select 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { getAirportByCode } from '../data.js'
 
-const RouteMap = ({ selected, handleClick }) => {
+const RouteMap = ({ selected, handleClick, option }) => {
   const MappedRoutes = () => (
     selected.map((route, index) => {
       const src = getAirportByCode(route.src)
@@ -10,7 +10,7 @@ const RouteMap = ({ selected, handleClick }) => {
       return (
         <g key={index}>
           <circle 
-            className="source" 
+            className={`source ${option}`}
             cx={src.long} 
             cy={src.lat}
             onClick={handleClick}
@@ -18,14 +18,17 @@ const RouteMap = ({ selected, handleClick }) => {
             <title>{route.src}</title>
           </circle> 
           <circle 
-            className="destination" 
+            className={`destination ${option}`}
             cx={dest.long} 
             cy={dest.lat}
             onClick={handleClick}
           >
             <title>{route.dest}</title>
           </circle>
-          <path d={`M${src.long} ${src.lat} L ${dest.long} ${dest.lat}`} />
+          <path 
+            d={`M${src.long} ${src.lat} L ${dest.long} ${dest.lat}`}
+            className={option}
+          />
         </g>
       )
     })
